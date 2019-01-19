@@ -1,18 +1,32 @@
 import os
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 
 import cv2
 import Deropy.common as cmn
 
 
-def show_image(img):
-    '''画像表示(縦,横,色)'''
+def pil2cv(image):
+    new_image = np.array(image)
+    if new_image.ndim == 2:  # モノクロ
+        pass
+    elif new_image.shape[2] == 3:  # カラー
+        new_image = new_image[:, :, ::-1]
+    elif new_image.shape[2] == 4:  # 透過
+        new_image = new_image[:, :, [2, 1, 0, 3]]
+    return new_image
+
+
+def show_image(image, wait_time=0):
+    ''' 画像表示 (縦,横,チャンネル) '''
+    if type(image) != np.ndarray:
+        image = pil2cv(image)
     cv2.namedWindow('window')
-    cv2.imshow('window', img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    cv2.imshow('window', image)
+    cv2.waitKey(wait_time * 1000)
+    cv2.destroyWindow('window')
 
 
 def plot_df(df, filename, title='', xlim=(None, None), ylim=(None, None)):
