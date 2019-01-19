@@ -139,3 +139,57 @@ def cal_eval(labels, predict, stride=0.05):
         'precision': prec_list,
         'precision_neg': prec_neg_list})
     return df
+
+
+class ImageDataGenerator:
+    def __init__(self, rescale=None):
+        '''rescale=1/255'''
+        self.reset()
+        self.rescale = rescale
+
+    def reset(self):
+        self.images = []
+        self.labels = []
+        # self.images = np.array([], dtype=np.float32)
+        # self.labels = np.array([], dtype=np.float32)
+
+    def flow_from_list(self, files, labels,
+                       imgsize, batch_size, shuffle=True, seed=None):
+        '''リストからバッチ生成'''
+        '''imgsize=(height, width)'''
+        self.reset()
+        # データ数チェック
+        if len(files) != len(labels):
+            print("files and labels are different length")
+            return
+        # シャッフル
+        if shuffle:
+            files, labels = cmn.shuffle_lists(files, labels, seed)
+        # バッチ作成
+        while True:
+            for i in range(len(files)):
+                try:
+                    if not os.path.exists(files[i]):
+                        files[i] = cmn.nfd(files[i])
+                    img = cv2.imread(files[i])  # 読み込み
+                    img = cv2.resize(img, imgsize)  # リサイズ
+                    # リスケール
+                    if not self.rescale is None:
+                        img = img.astype(np.float32)
+                        img *= self.rescale
+                    # リストに追加
+                    self.images.append(img)
+                    self.labels.append(labels[i])
+                    # print(self.images.shape)
+                    # self.images = np.append(self.images, img, axis=0)
+                    # self.labels = np.append(self.labels, labels[i], axis=0)
+
+                    # データが溜まったら
+                    if len(self.images) == batch_size:
+                        self.images = np.asarray(self.images, dtype=np.float32)
+                        self.labels = np.asarray(self.labels, dtype=np.float32)
+                        yield self.images, self.labels
+                        self.reset()
+                except Exception as ex:
+                    print(i, files[i], str(ex))
+                    exit()
