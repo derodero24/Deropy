@@ -93,6 +93,7 @@ def _load_model(filename, framework='keras', args={}):
         model.load_state_dict(state['state_dict'])
     return model
 
+
 def save_hist(history, filename):
     '''学習履歴を保存'''
     data = {}
@@ -102,3 +103,39 @@ def save_hist(history, filename):
     data['val_loss'] = history.history['val_loss']
     data['val_acc'] = history.history['val_acc']
     pd.DataFrame(data).to_csv(filename + '.csv', index=None)
+
+
+def cal_eval(labels, predict, stride=0.05):
+    '''評価指標の保存'''
+    sklm = import_module('sklearn.metrics')
+    # 閾値
+    thresholds = [round(i * stride, 2) for i in range(round(1 / stride) + 1)]
+    thresholds[0], thresholds[-1] = 0.01, 0.99
+    # ネガティブ基準
+    labels_neg = [0 if l else 1 for l in labels]
+    predict_neg = [1 - p for p in predict]
+    # 計算
+    acc_list, recall_list, prec_list = [], [], []
+    acc_neg_list, recall_neg_list, prec_neg_list = [], [], []
+    for threshold in thresholds:
+        tmp_pred = [1 if p > threshold else 0 for p in predict]
+        tmp_pred_neg = [1 if p > threshold else 0 for p in predict_neg]
+        # 正解率
+        acc_list.append(sklm.accuracy_score(labels, tmp_pred))
+        acc_neg_list.append(sklm.accuracy_score(labels_neg, tmp_pred_neg))
+        # 再現率
+        recall_list.append(sklm.recall_score(labels, tmp_pred))
+        recall_neg_list.append(sklm.recall_score(labels_neg, tmp_pred_neg))
+        # 適合率
+        prec_list.append(sklm.precision_score(labels, tmp_pred))
+        prec_neg_list.append(sklm.precision_score(labels_neg, tmp_pred_neg))
+    # 保存
+    df = pd.DataFrame({
+        'threshold': thresholds,
+        'accuracy': acc_list,
+        'accuracy_neg': acc_neg_list,
+        'recall': recall_list,
+        'recall_neg': recall_neg_list,
+        'precision': prec_list,
+        'precision_neg': prec_neg_list})
+    return df
