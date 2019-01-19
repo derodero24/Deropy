@@ -25,7 +25,7 @@ FIREFOX = cmn.system_func(
 
 
 def get_driver(width=960, height=540, firefox=False):
-    '''ウェブドライバー取得'''
+    ''' ウェブドライバー取得 '''
     if not firefox:
         options = Options_ch()
         options.binary_location = CHROME_CANARY
@@ -45,7 +45,7 @@ def get_driver(width=960, height=540, firefox=False):
 
 
 def encode_bytes(b_content):
-    '''バイト列をutf-8にエンコード'''
+    ''' バイト列をutf-8文字列に変換 '''
     # デコード処理
     encoding = chardet.detect(b_content)['encoding']
     try:
@@ -64,7 +64,7 @@ def imageExt(b_content):
 
 
 def imageSize(b_content):
-    '''画像サイズ (横px, 縦px)'''
+    '''画像サイズ取得 (横px, 縦px)'''
     img_bin = io.BytesIO(b_content)  # bytesオブジェクトを生成
     pil_img = Image.open(img_bin)  # PILで読み込み
     return pil_img.size
@@ -106,7 +106,6 @@ def pageSize(driver):
 
 def screenShotFull(driver, filename, timeout=30, firefox=False):
     '''フルページ スクリーンショット'''
-    cmn.makedirs(filename)
     url = driver.current_url  # url取得
     # コマンド作成
     if not firefox:
