@@ -142,6 +142,7 @@ def cal_eval(labels, predict, stride=0.05):
 
 
 class ImageDataGenerator:
+    ''' keras用DataGenerator '''
     def __init__(self, rescale=None):
         '''rescale=1/255'''
         self.reset()
@@ -180,9 +181,6 @@ class ImageDataGenerator:
                     # リストに追加
                     self.images.append(img)
                     self.labels.append(labels[i])
-                    # print(self.images.shape)
-                    # self.images = np.append(self.images, img, axis=0)
-                    # self.labels = np.append(self.labels, labels[i], axis=0)
 
                     # データが溜まったら
                     if len(self.images) == batch_size:
