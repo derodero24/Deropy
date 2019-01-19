@@ -18,3 +18,42 @@ def keras_gpu_options():
     config.gpu_options.allow_growth = True
     config.gpu_options.visible_device_list = '0,1'
     tfb.set_session(tf.Session(config=config))
+
+
+def save_model(model, filename, framework='keras', args=[], kwargs={}):
+    '''モデル・重みの保存'''
+    if framework == 'keras':
+        with open(filename + '.json', 'w') as f:
+            f.write(model.to_json())
+        model.save_weights(filename + '.h5')
+    elif framework == 'pytorch':
+        inspect = import_module('inspect')
+        module_path = inspect.getmodule(model).__file__
+        class_name = model.__class__.__name__
+        state = {'module_path': module_path,
+                 'class_name': class_name,
+                 'state_dict': model.cpu().state_dict(),
+                 'args': args,
+                 'kwargs': kwargs}
+        with open(filename + '.pkl', 'wb') as f:  # 一時処置
+            pickle.dump(state, f)
+
+
+def _save_model(model, filename, framework='keras'):
+    '''モデル・重みの保存'''
+    if framework == 'keras':
+        with open(filename + '.json', 'w') as f:
+            f.write(model.to_json())
+        model.save_weights(filename + '.h5')
+    elif framework == 'pytorch':
+        if model.__module__ == '__main__':
+            module_name = __file__
+        else:
+            module_name = model.__module__
+        import_class = model.__class__.__name__
+        state = {'import_path': os.path.abspath(module_name + '.py'),
+                 'module_name': module_name,
+                 'class_name': import_class,
+                 'state_dict': model.state_dict()}
+        with open(filename + '.pkl', 'wb') as f:
+            pickle.dump(state, f)
