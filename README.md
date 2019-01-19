@@ -1,6 +1,7 @@
 # Deropy
 
 自作Pythonモジュール<br>
+(2019/01/19更新)
 
 ## 構成
 
@@ -48,9 +49,9 @@
 
 -   `keras_gpu_options()`: keras gpu設定
 -   `save_model()`: モデル・重みの保存
--   `_save_model`: `save_model`の廃止版
+-   `_save_model()`: `save_model`の廃止版
 -   `load_model()`: モデル・重みの読み込み
--   `_load_model`: `load_model`の廃止版
+-   `_load_model()`: `load_model`の廃止版
 -   `save_hist()`: 学習履歴を保存
 -   `cal_eval()`: 評価指標の保存
 
@@ -62,23 +63,23 @@
 
 ### 関数
 
--   `show_image()` : 画像表示
--   `plot_df()` : データフレームからグラフをプロット
--   `plot_csv()` : csvファイルからグラフをプロット
+-   `show_image()`: 画像表示
+-   `plot_df()`: データフレームからグラフをプロット
+-   `plot_csv()`: csvファイルからグラフをプロット
 
 ## google.py
 
 ### クラス
 
 -   `Google()`:
-    -   `Search()` : Google検索
-    _   `Suggest()` : サジェスト取得
-    _   `Value()` : 検索回数取得
+    -   `Search()`: Google検索
+    _   `Suggest()`: サジェスト取得
+    _   `Value()`: 検索回数取得
 
 ## datasets.py
 
 ### 関数
 
--   `Dogs_vs_Cats()` : Dogs vs Catsデータ読み込み
--   `Cifar10()` : Cifar10 データジェネレーター
+-   `Dogs_vs_Cats()`: Dogs vs Catsデータ読み込み
+-   `Cifar10()`: Cifar10 データジェネレーター
 -   `Sudoku()`: 数独データジェネレーター
