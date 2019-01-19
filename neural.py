@@ -92,3 +92,13 @@ def _load_model(filename, framework='keras', args={}):
         model = getattr(module, state['class_name'])(**args)
         model.load_state_dict(state['state_dict'])
     return model
+
+def save_hist(history, filename):
+    '''学習履歴を保存'''
+    data = {}
+    data['epoch'] = list(range(len(history.history['loss'])))
+    data['loss'] = history.history['loss']
+    data['acc'] = history.history['acc']
+    data['val_loss'] = history.history['val_loss']
+    data['val_acc'] = history.history['val_acc']
+    pd.DataFrame(data).to_csv(filename + '.csv', index=None)
