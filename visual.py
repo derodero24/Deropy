@@ -48,10 +48,11 @@ def add_alpha(image):
 
 def show_image(image, wait=0):
     ''' 画像表示 '''
-    if type(image) != np.ndarray:
-        image = pil2cv(image)
+    new_image = deepcopy(image)
+    if type(new_image) != np.ndarray:
+        new_image = pil2cv(new_image)
     cv2.namedWindow('window')
-    cv2.imshow('window', image)
+    cv2.imshow('window', new_image)
     cv2.waitKey(wait * 1000)
     cv2.destroyWindow('window')
 
