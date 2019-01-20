@@ -1,7 +1,7 @@
 # Deropy
 
 自作Pythonモジュール<br>
-(2019/01/19更新)
+(2019/01/20更新)
 
 ## 構成
 
@@ -63,6 +63,9 @@
 
 ### 関数
 
+-   `pil2cv`: PIL型 -> OpenCV型
+-   `cv2pil`: OpenCV型 -> PIL型
+-   `add_alpha`: αチャンネル追加
 -   `show_image()`: 画像表示
 -   `plot_df()`: データフレームからグラフをプロット
 -   `plot_csv()`: csvファイルからグラフをプロット
@@ -71,10 +74,7 @@
 
 ### クラス
 
--   `Google()`:
-    -   `Search()`: Google検索
-    _   `Suggest()`: サジェスト取得
-    _   `Value()`: 検索回数取得
+-   `Google()`: 検索結果，サジェストワード，検索回数
 
 ## datasets.py
 

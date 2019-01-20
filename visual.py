@@ -1,4 +1,5 @@
 import os
+from copy import deepcopy
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -23,7 +24,7 @@ def pil2cv(image):
 
 def cv2pil(image):
     ''' OpenCV型 -> PIL型 '''
-    new_image = image
+    new_image = deepcopy(image)
     if new_image.ndim == 2:  # モノクロ
         pass
     elif new_image.shape[2] == 3:  # カラー
@@ -34,13 +35,24 @@ def cv2pil(image):
     return new_image
 
 
-def show_image(image, wait_time=0):
+def add_alpha(image):
+    ''' αチャンネル追加 '''
+    new_image = deepcopy(image)
+    if type(image) == np.ndarray:
+        new_image = cv2pil(new_image)
+    new_image = new_image.convert('RGBA')
+    if type(image) == np.ndarray:
+        new_image = pil2cv(new_image)
+    return new_image
+
+
+def show_image(image, wait=0):
     ''' 画像表示 '''
     if type(image) != np.ndarray:
         image = pil2cv(image)
     cv2.namedWindow('window')
     cv2.imshow('window', image)
-    cv2.waitKey(wait_time * 1000)
+    cv2.waitKey(wait * 1000)
     cv2.destroyWindow('window')
 
 
