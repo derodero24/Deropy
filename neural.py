@@ -1,5 +1,6 @@
 import os
 import pickle
+from copy import deepcopy
 from importlib import import_module, machinery
 
 import numpy as np
@@ -27,12 +28,11 @@ def save_model(model, filename, framework='keras', args=[], kwargs={}):
             f.write(model.to_json())
         model.save_weights(filename + '.h5')
     elif framework == 'pytorch':
+        model_cpu = deepcopy(model).cpu()
         inspect = import_module('inspect')
-        module_path = inspect.getmodule(model).__file__
-        class_name = model.__class__.__name__
-        state = {'module_path': module_path,
-                 'class_name': class_name,
-                 'state_dict': model.cpu().state_dict(),
+        state = {'module_path': inspect.getmodule(model).__file__,
+                 'class_name': model.__class__.__name__,
+                 'state_dict': model_cpu.state_dict(),
                  'args': args,
                  'kwargs': kwargs}
         with open(filename + '.pkl', 'wb') as f:  # 一時処置
@@ -143,6 +143,7 @@ def cal_eval(labels, predict, stride=0.05):
 
 class ImageDataGenerator:
     ''' keras用DataGenerator '''
+
     def __init__(self, rescale=None):
         '''rescale=1/255'''
         self.reset()
