@@ -56,7 +56,7 @@ def encode_bytes(b_content):
 
 
 def imageExt(b_content):
-    '''画像形式の判定'''
+    ''' 画像形式の判定 '''
     ext = imghdr.what(None, b_content)
     if ext is None and b_content[:2] == b'\xff\xd8':
         ext = 'jpeg'
@@ -64,14 +64,14 @@ def imageExt(b_content):
 
 
 def imageSize(b_content):
-    '''画像サイズ取得 (横px, 縦px)'''
+    ''' 画像サイズ取得 (横px, 縦px) '''
     img_bin = io.BytesIO(b_content)  # bytesオブジェクトを生成
     pil_img = Image.open(img_bin)  # PILで読み込み
     return pil_img.size
 
 
 def save_images(url_list, basename, dir='./', digits=3):
-    '''画像をインデックス付きでまとめて保存'''
+    ''' 画像をインデックス付きでまとめて保存 '''
     dir = os.path.join(dir, basename)
     os.makedirs(dirname, exist_ok=True)
     name = cmn.name_index(basename, digits, first=1)  # ファイル名ジェネレータ
@@ -97,7 +97,7 @@ def save_images(url_list, basename, dir='./', digits=3):
 
 
 def pageSize(driver):
-    '''ページサイズ取得 (横, 縦)'''
+    ''' ページサイズ取得 (横, 縦) '''
     w = driver.execute_script("return document.body.scrollWidth;")
     h = driver.execute_script("return document.body.scrollHeight;")
     # print(w, h)
@@ -105,7 +105,7 @@ def pageSize(driver):
 
 
 def screenShotFull(driver, filename, timeout=30, firefox=False):
-    '''フルページ スクリーンショット'''
+    ''' フルページ スクリーンショット '''
     url = driver.current_url  # url取得
     # コマンド作成
     if not firefox:

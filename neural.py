@@ -1,10 +1,12 @@
 import os
 import pickle
+from bisect import bisect_left
 from copy import deepcopy
 from importlib import import_module, machinery
 
 import numpy as np
 import pandas as pd
+from sklearn.metrics import precision_recall_curve as prc
 
 import cv2
 import Deropy.common as cmn
@@ -22,7 +24,7 @@ def keras_gpu_options():
 
 
 def save_model(model, filename, framework='keras', args=[], kwargs={}):
-    '''モデル・重みの保存'''
+    ''' モデル・重みの保存 '''
     if framework == 'keras':
         with open(filename + '.json', 'w') as f:
             f.write(model.to_json())
@@ -40,7 +42,7 @@ def save_model(model, filename, framework='keras', args=[], kwargs={}):
 
 
 def _save_model(model, filename, framework='keras'):
-    '''モデル・重みの保存'''
+    ''' モデル・重みの保存 '''
     if framework == 'keras':
         with open(filename + '.json', 'w') as f:
             f.write(model.to_json())
@@ -60,7 +62,7 @@ def _save_model(model, filename, framework='keras'):
 
 
 def load_model(filename, framework='keras'):
-    '''モデル・重みの読み込み'''
+    ''' モデル・重みの読み込み '''
     if framework == 'keras':
         k_models = import_module('keras.models')
         with open(filename + '.json', 'r') as f:
@@ -78,7 +80,7 @@ def load_model(filename, framework='keras'):
 
 
 def _load_model(filename, framework='keras', args={}):
-    '''モデル・重みの読み込み'''
+    ''' モデル・重みの読み込み '''
     from keras.models import model_from_json
     if framework == 'keras':
         with open(filename + '.json', 'r') as f:
@@ -95,7 +97,7 @@ def _load_model(filename, framework='keras', args={}):
 
 
 def save_hist(history, filename):
-    '''学習履歴を保存'''
+    ''' 学習履歴を保存 '''
     data = {}
     data['epoch'] = list(range(len(history.history['loss'])))
     data['loss'] = history.history['loss']
@@ -105,12 +107,12 @@ def save_hist(history, filename):
     pd.DataFrame(data).to_csv(filename + '.csv', index=None)
 
 
-def cal_eval(labels, predict, stride=0.05):
-    '''評価指標の保存'''
+def _cal_eval(labels, predict, stride=0.05):
+    ''' 評価指標の保存 (deprecated) '''
     sklm = import_module('sklearn.metrics')
     # 閾値
     thresholds = [round(i * stride, 2) for i in range(round(1 / stride) + 1)]
-    thresholds[0], thresholds[-1] = 0.01, 0.99
+    # thresholds[0], thresholds[-1] = 0.01, 0.99
     # ネガティブ基準
     labels_neg = [0 if l else 1 for l in labels]
     predict_neg = [1 - p for p in predict]
@@ -141,6 +143,24 @@ def cal_eval(labels, predict, stride=0.05):
     return df
 
 
+def cal_rec_prec(label, predict, stride=0.05):
+    ''' recall-precesion曲線 '''
+    thresholds = [round(i * stride, 2) for i in range(round(1 / stride) + 1)]
+    prec_pos, rec_pos, thresh_pos = prc(label, predict, pos_label=1)
+    prec_neg, rec_neg, thresh_neg = prc(label, predict, pos_label=0)
+    df = pd.DataFrame(columns=[
+        'threshold',
+        'recall_pos', 'precision_pos',
+        'recall_neg', 'precision_neg'])
+    for i, threshold in enumerate(thresholds):
+        idx_pos = bisect_left(thresh_pos, threshold)
+        idx_neg = bisect_left(thresh_neg, threshold)
+        df.loc[str(i)] = [threshold,
+                      rec_pos[idx_pos], prec_pos[idx_pos],
+                      rec_neg[idx_neg], prec_neg[idx_neg]]
+    return df
+
+
 class ImageDataGenerator:
     ''' keras用DataGenerator '''
 
@@ -157,8 +177,8 @@ class ImageDataGenerator:
 
     def flow_from_list(self, files, labels,
                        imgsize, batch_size, shuffle=True, seed=None):
-        '''リストからバッチ生成'''
-        '''imgsize=(height, width)'''
+        ''' リストからバッチ生成 '''
+        '''i mgsize=(height, width) '''
         self.reset()
         # データ数チェック
         if len(files) != len(labels):
@@ -192,3 +212,10 @@ class ImageDataGenerator:
                 except Exception as ex:
                     print(i, files[i], str(ex))
                     exit()
+
+
+if __name__ == '__main__':
+    a = [0, 1, 0, 1, 1]
+    b = [0.81, 0.43, 0.1, 0.98, 0.33]
+    df = cal_rec_prec(a, b)
+    print(df)

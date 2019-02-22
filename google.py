@@ -20,7 +20,7 @@ class Google:
             'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:57.0) Gecko/20100101 Firefox/57.0'})
 
     def Search(self, keyword, type='text', maximum=100):
-        '''Google検索'''
+        ''' Google検索 '''
         print('Google', type.capitalize(), 'Search :', keyword)
         result, total = [], 0
         query = self.query_gen(keyword, type)
@@ -49,7 +49,7 @@ class Google:
         return result
 
     def Suggest(self, keyword, jap=False, alph=False, num=False):
-        '''サジェスト取得'''
+        ''' サジェスト取得 '''
         # 文字リスト作成
         chars = ['', ' ']
         chars += [' ' + chr(i) for i in range(12353, 12436)] if jap else []
@@ -66,7 +66,7 @@ class Google:
         return suggests
 
     def Value(self, keywords):
-        '''検索回数取得'''
+        ''' 検索回数取得 '''
         # リスト化
         if not isinstance(keywords, list):
             keywords = [keywords]
@@ -84,7 +84,7 @@ class Google:
         return vals
 
     def query_gen(self, keyword, type):
-        '''検索クエリジェネレータ'''
+        ''' 検索クエリジェネレータ '''
         page = 0
         while True:
             if type == 'text':
@@ -105,7 +105,7 @@ class Google:
             page += 1
 
     def get_links(self, html, type):
-        '''html内のリンクを取得'''
+        ''' html内のリンクを取得 '''
         soup = BeautifulSoup(html, 'lxml')
         if type == 'text':
             elements = soup.select('.rc > .r > a')

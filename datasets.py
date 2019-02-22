@@ -11,7 +11,7 @@ import Deropy.visual as vsl
 
 
 def Cifar10(num=50000, seed=None):
-    '''Cifar10 データジェネレーター'''
+    ''' Cifar10 データジェネレーター '''
     # データ読み込み
     images, labels = [], []
     for i in range(5):
@@ -46,7 +46,7 @@ def Cifar10(num=50000, seed=None):
 
 
 def Dogs_vs_Cats(size=None, num=25000, seed=None):
-    '''Dogs vs Cats データジェネレーター'''
+    ''' Dogs vs Cats データジェネレーター '''
     dir = cmn.dpath('Dogs_vs_Cats/')
     # ランダムシード設定
     if not seed is None:
@@ -80,7 +80,7 @@ def Dogs_vs_Cats(size=None, num=25000, seed=None):
 
 
 def Sudoku(num=1000000, seed=None):
-    '''数独データジェネレーター'''
+    ''' 数独データジェネレーター '''
     df = pd.read_csv(cmn.dpath('sudoku.csv'))
     # ランダムシード設定
     if not seed is None:

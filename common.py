@@ -7,17 +7,17 @@ from urllib.request import urlparse
 
 
 def path(path):
-    '''ユーザディレクトリからのパス'''
+    ''' ユーザディレクトリからのパス '''
     return os.path.expanduser(path)
 
 
 def dpath(path):
-    '''データセットディレクトリからのパス'''
+    ''' データセットディレクトリからのパス '''
     return os.path.expanduser('~/Datasets/' + path)
 
 
 def get_files(directory):
-    '''ディレクトリ下のファイルを取得'''
+    ''' ディレクトリ下のファイルを取得 '''
     ignore = ('.DS_Store')
     file_list = []
     for root, dirs, files in os.walk(directory):
@@ -28,7 +28,7 @@ def get_files(directory):
 
 
 def filename(url, maxlen=53):
-    '''ファイル名変換'''
+    ''' ファイル名変換 '''
     o = urlparse(url)
     filename, ext = os.path.splitext(o.netloc + o.path)
     filename = re.sub(r'[:*?"<>|/\\]', '_', filename)  # 禁止文字置換
@@ -41,7 +41,7 @@ def filename(url, maxlen=53):
 
 
 def shuffle_lists(*lists, seed=None):
-    '''リストをまとめてシャッフル'''
+    ''' リストをまとめてシャッフル '''
     if not seed is None:
         old_state = random.getstate()
         random.seed(seed)
@@ -53,12 +53,12 @@ def shuffle_lists(*lists, seed=None):
 
 
 def nfd(filename):
-    '''NFD変換'''
+    ''' NFD変換 '''
     return unicodedata.normalize('NFD', filename)
 
 
 def name_index(basename, digits=2, first=0):
-    '''インデックス付きで名前生成'''
+    ''' インデックス付きで名前生成 '''
     i = first
     style = '%0' + str(digits) + 'd'
     while True:
@@ -67,7 +67,7 @@ def name_index(basename, digits=2, first=0):
 
 
 def system():
-    '''OS判定'''
+    ''' OS判定 '''
     val = {'Darwin': 'mac', 'Windows': 'win', 'Linux': 'lin'}
     name = platform.system()
     if name in val.keys():
@@ -77,7 +77,7 @@ def system():
 
 
 def system_func(mac, win, lin=None, others=None):
-    '''OSに応じて戻り値を変える'''
+    ''' OSに応じて戻り値を変える '''
     val = {'mac': mac, 'win': win, 'lin': lin, '': others}
     return val[system()]
 

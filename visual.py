@@ -58,7 +58,7 @@ def show_image(image, wait=0):
 
 
 def plot_df(df, filename, title='', xlim=(None, None), ylim=(None, None)):
-    '''データフレームからグラフをプロット（一列目が横軸）'''
+    ''' データフレームからグラフをプロット（一列目が横軸） '''
     cols = df.columns.values
     x_col, y_cols = cols[0], cols[1:]
     plt.figure()
@@ -86,7 +86,7 @@ def plot_df(df, filename, title='', xlim=(None, None), ylim=(None, None)):
 
 def plot_csv(csvname, savename=None, items=None, title='',
              xlim=(None, None), ylim=(None, None), sep=','):
-    '''csvファイルからグラフをプロット（一列目が横軸）グラフファイル名はcsvと同じ'''
+    ''' csvファイルからグラフをプロット（一列目が横軸）グラフファイル名はcsvと同じ '''
     df = pd.read_csv(csvname, sep=sep, header=0, index_col=None)
     df = df[items] if not items is None else df
     savename = os.path.splitext(csvname)[0] if savename is None else savename
