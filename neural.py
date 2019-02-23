@@ -143,11 +143,12 @@ def _cal_eval(labels, predict, stride=0.05):
     return df
 
 
-def cal_rec_prec(label, predict, stride=0.05):
+def cal_rec_prec(label_pos, predict, stride=0.05):
     ''' recall-precesion曲線 '''
     thresholds = [round(i * stride, 2) for i in range(round(1 / stride) + 1)]
-    prec_pos, rec_pos, thresh_pos = prc(label, predict, pos_label=1)
-    prec_neg, rec_neg, thresh_neg = prc(label, predict, pos_label=0)
+    prec_pos, rec_pos, thresh_pos = prc(label_pos, predict, pos_label=1)
+    label_neg = [1 - l for l in label_pos]
+    prec_neg, rec_neg, thresh_neg = prc(label_neg, predict, pos_label=0)
     df = pd.DataFrame(columns=[
         'threshold',
         'recall_pos', 'precision_pos',
