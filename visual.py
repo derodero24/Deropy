@@ -57,14 +57,18 @@ def show_image(image, wait=0):
     cv2.destroyWindow('window')
 
 
-def plot_df(df, filename, title='', xlim=(None, None), ylim=(None, None)):
+def plot_df(dfs, filename, title='', xlim=(None, None), ylim=(None, None)):
     ''' データフレームからグラフをプロット（一列目が横軸） '''
-    cols = df.columns.values
-    x_col, y_cols = cols[0], cols[1:]
     plt.figure()
+    # リスト化
+    if not isinstance(dfs, (list, tuple)):
+        dfs = [dfs]
     # プロット
-    for y_col in y_cols:
-        plt.plot(df[x_col], df[y_col], marker='.', label=y_col)
+    for df in dfs:
+        cols = df.columns.values
+        x_col, y_cols = cols[0], cols[1:]
+        for y_col in y_cols:
+            plt.plot(df[x_col], df[y_col], marker='.', label=y_col)
     # 各種設定
     plt.grid()
     plt.title(title)
