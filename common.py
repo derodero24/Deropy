@@ -3,6 +3,7 @@ import platform
 import random
 import re
 import unicodedata
+from logging import DEBUG, FileHandler, Formatter, StreamHandler
 from urllib.request import urlparse
 
 
@@ -80,6 +81,21 @@ def system_func(mac, win, lin=None, others=None):
     ''' OSに応じて戻り値を変える '''
     val = {'mac': mac, 'win': win, 'lin': lin, '': others}
     return val[system()]
+
+
+def init_logger(logger, filename='log'):
+    log_fmt = Formatter(
+        '%(asctime)s %(name)s %(lineno)d [%(levelname)s][%(funcName)s] %(message)s ')
+    handler = StreamHandler()
+    handler.setLevel('INFO')
+    handler.setFormatter(log_fmt)
+    logger.addHandler(handler)
+
+    handler = FileHandler(f'{filename}.log', 'a')
+    handler.setLevel(DEBUG)
+    handler.setFormatter(log_fmt)
+    logger.setLevel(DEBUG)
+    logger.addHandler(handler)
 
 
 if __name__ == '__main__':
