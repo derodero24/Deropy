@@ -4,11 +4,12 @@ from bisect import bisect_left
 from copy import deepcopy
 from importlib import import_module, machinery
 
+import cv2
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from sklearn.metrics import precision_recall_curve as prc
 
-import cv2
 import Deropy.common as cmn
 
 
@@ -157,9 +158,36 @@ def cal_rec_prec(label, predict_pos, stride=0.05):
         idx_pos = bisect_left(thresh_pos, threshold)
         idx_neg = bisect_left(thresh_neg, threshold)
         df.loc[str(i)] = [threshold,
-                      rec_pos[idx_pos], prec_pos[idx_pos],
-                      rec_neg[idx_neg], prec_neg[idx_neg]]
+                          rec_pos[idx_pos], prec_pos[idx_pos],
+                          rec_neg[idx_neg], prec_neg[idx_neg]]
     return df
+
+
+def plot_rec_prec(df, filename, title='recall-precision', xlim=(-0.05, 1.05), ylim=(-0.05, 1.05)):
+    ''' データフレームからグラフをプロット（一列目が横軸） '''
+    plt.figure()
+    # プロット
+    plt.plot(df['recall_pos'], df['precision_pos'],
+             marker='.', label='positive')
+    plt.plot(df['recall_neg'], df['precision_neg'],
+             marker='.', label='positive')
+    # 各種設定
+    plt.grid()
+    plt.title(title)
+    plt.legend()
+    plt.xlabel('recall')
+    plt.ylabel('precision')
+    # グラフ範囲
+    xmin, xmax = plt.xlim()
+    ymin, ymax = plt.ylim()
+    xmin = min(xmin, xlim[0]) if not xlim[0] is None else xmin
+    xmax = max(xmax, xlim[1]) if not xlim[1] is None else xmax
+    ymin = min(ymin, ylim[0]) if not ylim[0] is None else ymin
+    ymax = max(ymax, ylim[1]) if not ylim[1] is None else ymax
+    plt.xlim(xmin, xmax)
+    plt.ylim(ymin, ymax)
+    # 保存
+    plt.savefig(filename + '.png')
 
 
 class ImageDataGenerator:
@@ -220,3 +248,4 @@ if __name__ == '__main__':
     b = [0.81, 0.43, 0.1, 0.98, 0.33]
     df = cal_rec_prec(a, b)
     print(df)
+    plot_rec_prec(df, 'test')
