@@ -11,6 +11,7 @@ import pandas as pd
 from sklearn.metrics import precision_recall_curve as prc
 
 import Deropy.common as cmn
+import Deropy.visual as vsl
 
 
 def keras_gpu_options():
@@ -163,9 +164,9 @@ def cal_rec_prec(label, predict_pos, stride=0.05):
     return df
 
 
-def plot_rec_prec(df, filename, title='recall-precision', xlim=(-0.05, 1.05), ylim=(-0.05, 1.05)):
+def plot_rec_prec(df, filename, xlim=(-0.05, 1.05), ylim=(-0.05, 1.05)):
     ''' データフレームからグラフをプロット（一列目が横軸） '''
-    plt.figure()
+    plt.figure(figsize=(7, 5), dpi=200)
     # プロット
     plt.plot(df['recall_pos'], df['precision_pos'],
              marker='.', label='positive')
@@ -173,19 +174,11 @@ def plot_rec_prec(df, filename, title='recall-precision', xlim=(-0.05, 1.05), yl
              marker='.', label='positive')
     # 各種設定
     plt.grid()
-    plt.title(title)
     plt.legend()
-    plt.xlabel('recall')
-    plt.ylabel('precision')
+    plt.xlabel('recall', fontsize=12)
+    plt.ylabel('precision', fontsize=12)
     # グラフ範囲
-    xmin, xmax = plt.xlim()
-    ymin, ymax = plt.ylim()
-    xmin = min(xmin, xlim[0]) if not xlim[0] is None else xmin
-    xmax = max(xmax, xlim[1]) if not xlim[1] is None else xmax
-    ymin = min(ymin, ylim[0]) if not ylim[0] is None else ymin
-    ymax = max(ymax, ylim[1]) if not ylim[1] is None else ymax
-    plt.xlim(xmin, xmax)
-    plt.ylim(ymin, ymax)
+    vsl.set_limits(xlim, ylim)
     # 保存
     plt.savefig(filename + '.png')
 
@@ -247,5 +240,5 @@ if __name__ == '__main__':
     a = [0, 1, 0, 1, 1]
     b = [0.81, 0.43, 0.1, 0.98, 0.33]
     df = cal_rec_prec(a, b)
-    print(df)
-    plot_rec_prec(df, 'test')
+    # print(df)
+    plot_rec_prec(df, 'test0')
