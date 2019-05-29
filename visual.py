@@ -71,7 +71,7 @@ def set_limits(xlim=(None, None), ylim=(None, None)):
 
 def plot_df(dfs, filename, title='', xlim=(None, None), ylim=(None, None)):
     ''' データフレームからグラフをプロット（一列目が横軸） '''
-    plt.figure()
+    plt.figure(figsize=(7, 5), dpi=200)
     # リスト化
     if not isinstance(dfs, (list, tuple)):
         dfs = [dfs]
@@ -85,8 +85,8 @@ def plot_df(dfs, filename, title='', xlim=(None, None), ylim=(None, None)):
     plt.grid()
     plt.title(title)
     plt.legend()
-    plt.xlabel(x_col)
-    plt.ylabel(', '.join(y_cols))
+    plt.xlabel(x_col, fontsize=12)
+    plt.ylabel(', '.join(y_cols), fontsize=12)
     # グラフ範囲
     xmin, xmax = plt.xlim()
     ymin, ymax = plt.ylim()
