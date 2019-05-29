@@ -1,12 +1,12 @@
 import os
 from copy import deepcopy
 
+import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from PIL import Image
 
-import cv2
 import Deropy.common as cmn
 
 
@@ -55,6 +55,18 @@ def show_image(image, wait=0):
     cv2.imshow('window', new_image)
     cv2.waitKey(wait * 1000)
     cv2.destroyWindow('window')
+
+
+def set_limits(xlim=(None, None), ylim=(None, None)):
+    ''' x軸,y軸の範囲を設定 '''
+    xmin, xmax = plt.xlim()
+    ymin, ymax = plt.ylim()
+    xmin = min(xmin, xlim[0]) if not xlim[0] is None else xmin
+    xmax = max(xmax, xlim[1]) if not xlim[1] is None else xmax
+    ymin = min(ymin, ylim[0]) if not ylim[0] is None else ymin
+    ymax = max(ymax, ylim[1]) if not ylim[1] is None else ymax
+    plt.xlim(xmin, xmax)
+    plt.ylim(ymin, ymax)
 
 
 def plot_df(dfs, filename, title='', xlim=(None, None), ylim=(None, None)):
