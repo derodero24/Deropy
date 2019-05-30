@@ -171,7 +171,7 @@ def plot_rec_prec(df, filename, xlim=(-0.05, 1.05), ylim=(-0.05, 1.05)):
     plt.plot(df['recall_pos'], df['precision_pos'],
              marker='.', label='positive')
     plt.plot(df['recall_neg'], df['precision_neg'],
-             marker='.', label='positive')
+             marker='.', label='negative')
     # 各種設定
     plt.grid()
     plt.legend()
