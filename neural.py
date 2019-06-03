@@ -181,6 +181,7 @@ def plot_rec_prec(df, filename, xlim=(-0.05, 1.05), ylim=(-0.05, 1.05)):
     vsl.set_limits(xlim, ylim)
     # 保存
     plt.savefig(filename + '.png')
+    plt.close()
 
 
 class ImageDataGenerator:

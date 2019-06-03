@@ -98,6 +98,7 @@ def plot_df(dfs, filename, title='', xlim=(None, None), ylim=(None, None)):
     plt.ylim(ymin, ymax)
     # 保存
     plt.savefig(filename + '.png')
+    plt.close()
 
 
 def plot_csv(csvname, savename=None, items=None, title='',
