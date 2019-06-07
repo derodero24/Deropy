@@ -4,6 +4,7 @@ from bisect import bisect_left
 from copy import deepcopy
 from importlib import import_module, machinery
 
+import cloudpickle
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
@@ -25,7 +26,19 @@ def keras_gpu_options():
     tfb.set_session(tf.Session(config=config))
 
 
-def save_model(model, filename, framework='keras', args=[], kwargs={}):
+def save_model(model, filename, framework='pytorch'):
+    ''' モデル・重みの保存 '''
+    if framework == 'keras':
+        with open(filename + '.json', 'w') as f:
+            f.write(model.to_json())
+        model.save_weights(filename + '.h5')
+    elif framework == 'pytorch':
+        model_cpu = deepcopy(model).cpu()
+        with open(filename + '.pkl', 'wb') as f:
+            cloudpickle.dump(model_cpu, f)
+
+
+def _save_model(model, filename, framework='keras', args=[], kwargs={}):
     ''' モデル・重みの保存 '''
     if framework == 'keras':
         with open(filename + '.json', 'w') as f:
@@ -43,27 +56,20 @@ def save_model(model, filename, framework='keras', args=[], kwargs={}):
             pickle.dump(state, f)
 
 
-def _save_model(model, filename, framework='keras'):
-    ''' モデル・重みの保存 '''
+def load_model(filename, framework='pytorch'):
+    ''' モデル・重みの読み込み '''
     if framework == 'keras':
-        with open(filename + '.json', 'w') as f:
-            f.write(model.to_json())
-        model.save_weights(filename + '.h5')
+        k_models = import_module('keras.models')
+        with open(filename + '.json', 'r') as f:
+            model = k_models.model_from_json(f.read())
+        model.load_weights(filename + '.h5')
     elif framework == 'pytorch':
-        if model.__module__ == '__main__':
-            module_name = __file__
-        else:
-            module_name = model.__module__
-        import_class = model.__class__.__name__
-        state = {'import_path': os.path.abspath(module_name + '.py'),
-                 'module_name': module_name,
-                 'class_name': import_class,
-                 'state_dict': model.state_dict()}
-        with open(filename + '.pkl', 'wb') as f:
-            pickle.dump(state, f)
+        with open(filename + '.pkl', 'rb') as f:
+            model = cloudpickle.load(f)
+    return model
 
 
-def load_model(filename, framework='keras'):
+def _load_model(filename, framework='keras'):
     ''' モデル・重みの読み込み '''
     if framework == 'keras':
         k_models = import_module('keras.models')
@@ -77,23 +83,6 @@ def load_model(filename, framework='keras'):
             state['module_path'], state['module_path']).load_module()
         args, kwargs = state['args'], state['kwargs']
         model = getattr(module, state['class_name'])(*args, **kwargs)
-        model.load_state_dict(state['state_dict'])
-    return model
-
-
-def _load_model(filename, framework='keras', args={}):
-    ''' モデル・重みの読み込み '''
-    from keras.models import model_from_json
-    if framework == 'keras':
-        with open(filename + '.json', 'r') as f:
-            model = model_from_json(f.read())
-        model.load_weights(filename + '.h5')
-    elif framework == 'pytorch':
-        with open(filename + '.pkl', 'rb') as f:
-            state = pickle.load(f)
-        module = machinery.SourceFileLoader(
-            state['module_name'], state['import_path']).load_module()
-        model = getattr(module, state['class_name'])(**args)
         model.load_state_dict(state['state_dict'])
     return model
 
