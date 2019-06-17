@@ -8,6 +8,13 @@ from logging import DEBUG, FileHandler, Formatter, StreamHandler
 from urllib.request import urlparse
 
 
+class AttrDict(dict):
+    def __init__(self, *args, **kwargs):
+        ''' 属性付き辞書 '''
+        dict.__init__(self, *args, **kwargs)
+        self.__dict__ = self
+
+
 def path(path):
     ''' ユーザディレクトリからのパス '''
     return os.path.expanduser(path)
