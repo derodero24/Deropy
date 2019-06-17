@@ -3,6 +3,7 @@ import platform
 import random
 import re
 import unicodedata
+from inspect import currentframe
 from logging import DEBUG, FileHandler, Formatter, StreamHandler
 from urllib.request import urlparse
 
@@ -81,6 +82,12 @@ def system_func(mac, win, lin=None, others=None):
     ''' OSに応じて戻り値を変える '''
     val = {'mac': mac, 'win': win, 'lin': lin, '': others}
     return val[system()]
+
+
+def get_variable_name(var):
+    ''' 変数名取得 '''
+    names = {id(v): k for k, v in currentframe().f_back.f_locals.items()}
+    return names.get(id(var), None)
 
 
 def init_logger(logger, filename='log'):
